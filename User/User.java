@@ -16,6 +16,9 @@ public class User {
     public String getEmail(){
         return email;
     }
+    protected String getHashedPassword{
+        return hashedPassword;
+    }
     public boolean checkPassword(String pass){
         return BCrypt.checkpw(pass hashedPassword);
     }
