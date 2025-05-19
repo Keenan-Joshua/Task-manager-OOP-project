@@ -16,7 +16,7 @@ public class User {
     public String getEmail(){
         return email;
     }
-    protected String getHashedPassword{
+    protected String getHashedPassword(){
         return hashedPassword;
     }
     public boolean checkPassword(String pass){
