@@ -3,45 +3,91 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        AuthManager authManager = new AuthManager();
         DatabaseManager dbManager = new DatabaseManager();
         dbManager.connect();
 
-        AuthManager auth = new AuthManager();
+        while (true) {
+            System.out.println("\n--- Task Manager ---");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Select an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+            if (option == 1) {
+                System.out.print("Enter username: ");
+                String username = scanner.nextLine();
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+                boolean success = authManager.register(username, password);
+                if (success) dbManager.saveUser(authManager.login(username, password));
+            }
 
-        auth.register(username, password);
-        User user = auth.login(username, password);
-        dbManager.saveUser(user);
+            else if (option == 2) {
+                System.out.print("Enter username: ");
+                String username = scanner.nextLine();
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+                User user = authManager.login(username, password);
 
-        dbManager.loadUser(user.getUsername());
+                if (user != null) {
+                    TaskManager taskManager = new TaskManager();
+                    taskManager.tasks = dbManager.loadTasks(user.getUsername());
 
-        TaskManager taskManager = new TaskManager();
+                    while (true) {
+                        System.out.println("\n--- Task Menu ---");
+                        System.out.println("1. Add Task");
+                        System.out.println("2. View Tasks");
+                        System.out.println("3. Mark Task as Done");
+                        System.out.println("4. Delete Task");
+                        System.out.println("5. Logout");
+                        System.out.print("Select an option: ");
+                        int taskOption = scanner.nextInt();
+                        scanner.nextLine();
 
-        System.out.print("Enter task title: ");
-        String title = scanner.nextLine();
-        System.out.print("Enter task description: ");
-        String description = scanner.nextLine();
+                        if (taskOption == 1) {
+                            System.out.print("Enter task title: ");
+                            String title = scanner.nextLine();
+                            System.out.print("Enter task description: ");
+                            String description = scanner.nextLine();
+                            taskManager.addTask(title, description);
+                            dbManager.saveTask(new Task(title, description), user.getUsername());
+                        }
 
-        taskManager.addTask(title, description);
-        Task task = new Task(title, description);
+                        else if (taskOption == 2) {
+                            taskManager.viewTasks();
+                        }
 
-        dbManager.saveTask(task, user.getUsername());
+                        else if (taskOption == 3) {
+                            System.out.print("Enter task index to mark as done: ");
+                            int index = scanner.nextInt();
+                            scanner.nextLine();
+                            taskManager.markTaskAsDone(index);
+                            dbManager.updateTaskStatus(index, true);
+                        }
 
-        taskManager.viewTasks();
+                        else if (taskOption == 4) {
+                            System.out.print("Enter task index to delete: ");
+                            int index = scanner.nextInt();
+                            scanner.nextLine();
+                            taskManager.deleteTask(index);
+                            dbManager.deleteTask(index);
+                        }
 
-        task.markAsDone();
-        dbManager.updateTaskStatus(0, true);
+                        else if (taskOption == 5) {
+                            break;
+                        }
+                    }
+                }
+            }
 
-        taskManager.markTaskAsDone(0);
-        taskManager.viewTasks();
+            else if (option == 3) {
+                break;
+            }
+        }
 
-        dbManager.loadTasks(user.getUsername());
-
-        taskManager.deleteTask(0);
-        dbManager.deleteTask(0);
+        scanner.close();
     }
 }
