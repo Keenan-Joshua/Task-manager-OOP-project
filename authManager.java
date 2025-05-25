@@ -6,36 +6,14 @@ import java.util.Map;
 public class AuthManager {
     private Map<String, User> users = new HashMap<>();
 
-    public boolean register(String username, String password, String surname, String otherNames,
-                            String email, String phoneNumber, String nin) {
-
+    public boolean register(String username, String password) {
         if (users.containsKey(username)) {
             System.out.println("Registration failed: Username already exists.");
             return false;
         }
 
-        if (!isValidName(surname) || !isValidName(otherNames)) {
-            System.out.println("Registration failed: Names must only contain letters.");
-            return false;
-        }
-
-        if (!isValidEmail(email)) {
-            System.out.println("Registration failed: Email must end in .com, .org, .net, .gov, .mil, .edu or .biz");
-            return false;
-        }
-
-        if (!isValidPhone(phoneNumber)) {
-            System.out.println("Registration failed: Phone number must be exactly 10 digits.");
-            return false;
-        }
-
-        if (!isValidNIN(nin)) {
-            System.out.println("Registration failed: NIN must be 14 characters, start with 2 letters, followed by 12 alphanumeric characters.");
-            return false;
-        }
-
         String hashedPassword = hashPassword(password);
-        User newUser = new User(username, hashedPassword, surname, otherNames, email, phoneNumber, nin);
+        User newUser = new User(username, hashedPassword);
         users.put(username, newUser);
         System.out.println("User registered successfully.");
         return true;
@@ -53,7 +31,7 @@ public class AuthManager {
             return null;
         }
 
-        System.out.println("Login successful. Welcome " + user.getFullName());
+        System.out.println("Login successful.");
         return user;
     }
 
@@ -74,34 +52,6 @@ public class AuthManager {
 
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error: Hashing algorithm not found.");
-        }
-    }
-
-    private boolean isValidName(String name) {
-        return name != null && name.matches("[A-Za-z]+");
-    }
-
-    private boolean isValidEmail(String email) {
-        if (email == null) return false;
-        return email.matches("^[\\w.-]+@[\\w.-]+\\.(com|org|net|gov|mil|edu|biz)$");
-    }
-
-    private boolean isValidPhone(String phone) {
-        return phone != null && phone.matches("\\d{10}");
-    }
-
-    private boolean isValidNIN(String nin) {
-        return nin != null && nin.matches("^[A-Za-z]{2}[A-Za-z0-9]{12}$");
-    }
-
-    public void printAllUsers() {
-        for (Map.Entry<String, User> entry : users.entrySet()) {
-            User user = entry.getValue();
-            System.out.println("Username: " + user.getUsername() +
-                    ", Full Name: " + user.getFullName() +
-                    ", Email: " + user.getEmail() +
-                    ", Phone: " + user.getPhoneNumber() +
-                    ", NIN: " + user.getNin());
         }
     }
 }
