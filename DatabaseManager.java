@@ -3,9 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/task_manager_db";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/task_manager_db";
     private static final String USER = "root";
-    private static final String PASSWORD = "your_password";//Change your_password to my/your MySQL password
+    private static final String PASSWORD = "ArtetaIn21";//Change your_password to my/your MySQL password
 
     private Connection connection;//Manages the connection between Java and task_manager_db.
 
@@ -16,9 +16,9 @@ public class DatabaseManager {
     public void saveUser(User user) throws SQLException {
         String sql = "INSERT INTO users (username, hashed_password, email) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, User.getUsername());
-            stmt.setString(2, User.hashedPassword);
-            stmt.setString(3, User.getEmail());
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getHashedPassword());
+            stmt.setString(3, user.getEmail());
             stmt.executeUpdate();
         }
     }
@@ -42,8 +42,8 @@ public class DatabaseManager {
         String sql = "INSERT INTO tasks (username, title, description, is_done) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, task.title);
-            stmt.setString(3, task.description);
+            stmt.setString(2, task.getTitle());
+            stmt.setString(3, task.getDescription());
             stmt.setBoolean(4, task.isDone());
             stmt.executeUpdate();
         }
