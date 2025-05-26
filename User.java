@@ -1,9 +1,8 @@
-package User;
-
+import org.mindrot.jbcrypt.BCrypt;
 public class User {
-    private String username;
-    private String hashedPassword;
-    private String email;
+    private final String username;
+    private final String hashedPassword;
+    private final String email;
 
     public User(String uname, String hashPass, String mail){
         username = uname;
@@ -20,7 +19,7 @@ public class User {
         return hashedPassword;
     }
     public boolean checkPassword(String pass){
-        return BCrypt.checkpw(pass hashedPassword);
+        return BCrypt.checkpw(pass, hashedPassword);
     }
 
 
